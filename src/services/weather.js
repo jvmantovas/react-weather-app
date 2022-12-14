@@ -84,7 +84,7 @@ const formatToLocalTime = (
   secs,
   zone,
   format = "cccc, dd LLL yyyy' | Hora local: 'T"
-) => DateTime.fromSeconds(secs).setZone(zone).toFormat(format);
+) => DateTime.fromSeconds(secs).setZone(zone).setLocale("br").toFormat(format);
 
 const iconUrlFromCode = (code) =>
   `http://openweathermap.org/img/wn/${code}@2x.png`;
