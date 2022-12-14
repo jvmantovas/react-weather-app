@@ -53,7 +53,7 @@ const formatForecastWeather = (data) => {
   });
   hourly = hourly.slice(1, 6).map((d) => {
     return {
-      title: formatToLocalTime(d.dt, timezone, "T-hh:mm"),
+      title: formatToLocalTime(d.dt, timezone, "T"),
       temp: d.temp,
       icon: d.weather[0].icon,
     };
@@ -83,7 +83,7 @@ const getFormattedWeatherData = async (searchParams) => {
 const formatToLocalTime = (
   secs,
   zone,
-  format = "cccc, dd LLL yyyy' | Hora local: 'T-hh:mm"
+  format = "cccc, dd LLL yyyy' | Hora local: 'T"
 ) => DateTime.fromSeconds(secs).setZone(zone).toFormat(format);
 
 const iconUrlFromCode = (code) =>
