@@ -5,18 +5,48 @@ import Inputs from "./components/Inputs";
 import TimeAndLocation from "./components/TimeAndLocation";
 import TemperatureAndDetails from "./components/TemperatureAndDetails";
 import Forecast from "./components/Forecast";
+import getFormattedWeatherData from "./services/weather";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [query, setQuery] = useState({ q: "são paulo" });
+  const [units, setUnits] = useState("metric");
+  const [weather, setWeather] = useState(null);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      await getFormattedWeatherData({ ...query, units }).then((data) => {
+        setWeather(data);
+      });
+    };
+
+    fetchWeather();
+  }, [query, units]);
+
+  const formatBackground = () => {
+    if (!weather) return "from-cyan-700 to-blue-700";
+    const threshold = units === "metric" ? 20 : 60;
+    if (weather.temp < threshold) return "from-cyan-700 to-blue-700";
+
+    return "from-yellow-700 to-orange-700";
+  };
+
   return (
-    <div className="mx-auto max-w-screen-md mt-4 py-5 px-32 bg-gradient-to-br from-cyan-700 to-blue-700 shadow-xl shadow-gray-400">
-      <TopButtons />
-      <Inputs />
+    <div
+      className={`mx-auto max-w-screen-md mt-4 py-5 px-32 bg-gradient-to-br shadow-xl shadow-gray-400 ${formatBackground()}`}
+    >
+      <TopButtons setQuery={setQuery} />
+      <Inputs setQuery={setQuery} units={units} setUnits={setUnits} />
 
-      <TimeAndLocation />
-      <TemperatureAndDetails />
+      {weather && (
+        <div>
+          <TimeAndLocation weather={weather} />
+          <TemperatureAndDetails weather={weather} />
 
-      <Forecast title="A cada hora" />
-      <Forecast title="Diário" />
+          <Forecast title="A cada hora" items={weather.hourly} />
+          <Forecast title="Diário" items={weather.daily} />
+        </div>
+      )}
     </div>
   );
 }
